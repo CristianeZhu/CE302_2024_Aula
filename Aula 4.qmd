@@ -1,0 +1,300 @@
+---
+title: "Aula 4"
+author: "Cristiane Zhu"
+format: html
+editor: visual
+---
+
+## DATA FRAMES 
+```{r}
+meu_df <- data.frame( x= c(1:10),
+                      y= LETTERS[1:10])
+meu_df
+
+# Exemplo de criação de Data Frame
+meu_data_frame <- data.frame(
+  nome = c("Alice", "Bob", "Carol", "Ana", "João", "Carlos", "Patrícia", "Leonardo"),
+  idade = c(25, 30, 28, 20, 27, 50, 60, 45),
+  salario = c(5000, 6000, 5500, 8000, 2000, 3500, 10000, 3800 ), 
+  meio_de_transporte = c('onibus', 'bicicleta', 'onibus', 'carro', 'carro', 'onibus', 'onibus', 'bicicleta')
+)
+meu_data_frame
+## Nomes de colunas do nosso data.frame não possuem espaço, podem ser separadas por "." ou "_".
+
+## ver as primeiras linhas do data frame
+head(meu_data_frame)
+
+##ver as últimas linhas do data frame
+tail(meu_data_frame)
+
+str(meu_data_frame) ## visão ogeral do data frame
+```
+
+## ACESSANDO COLUNAS
+```{r}
+# Acessar coluna usando o operador $
+meu_data_frame$nome
+
+meu_data_frame[1:2,3:4] ## linha 1 e 2 e coluna 3 e 4
+
+# Acessar coluna usando colchetes []
+meu_data_frame[, "idade"]
+
+##remover coluna
+meu_data_frame[, -2]
+
+## adicionar nova coluna
+meu_data_frame$gosta_do_bolo_do_joaquim <- c(TRUE, FALSE, FALSE, TRUE, TRUE, TRUE, FALSE, FALSE)
+
+meu_data_frame$constante = "Sim"
+```
+
+
+## FILTROS 
+```{r}
+ # Seleciona pessoas com idade maior que 28
+subconjunto_df <- meu_data_frame[meu_data_frame$idade > 28, ]
+subconjunto_df
+
+# Usando a função subset()
+subconjunto_df <- subset(meu_data_frame, idade > 28) # COLOCA O DATA FRAME e a coluna q vai ser filtrada
+subconjunto_df
+
+## filtros combinados
+subconjunto_2 <- subset( meu_data_frame, idade > 28 & !gosta_do_bolo_do_joaquim)
+subconjunto_2
+
+#dimensão
+dim(meu_data_frame) ## retorna linha e coluna
+nrow(meu_data_frame) #n de linhas
+ncol(meu_data_frame) # n de colunas
+```
+
+
+
+## SUMMARY E BY
+```{r}
+summary(meu_data_frame)
+
+
+# Exemplo de uso da função by()
+resultado <- by(meu_data_frame$salario, meu_data_frame$idade, mean) ## média de salário por(By) idade
+resultado
+
+ordenado <- meu_data_frame[order(meu_data_frame$idade), ]
+ordenado
+```
+
+
+
+## fatores
+```{r}
+## variavel qualitativa com categorias
+# Exemplo de criação de fator
+genero <- factor(c("Masculino", "Feminino", "Masculino", "Feminino"))
+
+# Exemplo com diferentes níveis (variável ordinal)
+estadiamento_doenca <- factor(c("Estágio I", "Estágio II", "Estágio I", "Estágio III", "Estágio IV"), 
+                              levels = c("Estágio I", "Estágio II", "Estágio III", "Estágio IV"))
+
+
+meu_data_frame$estad_doenca <- c("I", "I", "II", "IV", "II", "III", "I", "IV")
+meu_data_frame
+
+as.factor(meu_data_frame$estad_doenca )
+regiao_sul <- Queimadas$estado["PARANÁ", "RIO GRANDE DO SUL", "SANTA CATARINA"]
+meu_data_frame$estad_doenca= factor(meu_data_frame$estad_doenca , levels = c("IV", "III", "II", "I"))
+meu_data_frame$estad_doenca
+
+str(meu_data_frame)
+summary(meu_data_frame)
+
+## niveis do fator
+levels(meu_data_frame$estad_doenca)
+nlevels(meu_data_frame$estad_doenca)
+
+table(meu_data_frame$estad_doenca)
+tabela =table(meu_data_frame$estad_doenca, meu_data_frame$gosta_do_bolo_do_joaquim)
+
+prop.table(table(meu_data_frame$estad_doenca, meu_data_frame$gosta_do_bolo_do_joaquim), margin=2)
+
+margin.table( tabela, 1) #linha
+margin.table( tabela, 2) # coluna 
+
+```
+
+
+## lendo banco de dados
+```{r}
+# Lendo os dados de queimadas
+Queimadas_Q1 <- read.csv("/home/est/chz23/CE302_2024_Aula/FireWatch/Dataset_FireWatch_Brazil_Q1_2024.csv")
+head(Queimadas_Q1)
+
+Queimadas_Q2 <- read.csv("/home/est/chz23/CE302_2024_Aula/FireWatch/Dataset_FireWatch_Brazil_Q2_2024.csv")
+head(Queimadas_Q2)
+
+Queimadas_Q3 <- read.csv("/home/est/chz23/CE302_2024_Aula/FireWatch/Dataset_FireWatch_Brazil_Q2_2024.csv")
+head(Queimadas_Q3)
+
+dim(Queimadas_Q1)
+dim(Queimadas_Q2)
+dim(Queimadas_Q3)
+
+
+# Unindo os três bancos de dados
+Queimadas <- rbind(Queimadas_Q1, Queimadas_Q2, Queimadas_Q3)
+head(Queimadas)
+dim(Queimadas)
+
+nrow(Queimadas_Q1) +nrow(Queimadas_Q2) + nrow(Queimadas_Q3)
+
+write.csv(Queimadas, file = "/home/est/chz23/CE302_2024_Aula/FireWatch/Queimadas.csv", row.names = FALSE)
+```
+
+
+## EXERCÍCIOS
+```{r}
+#1
+Queimadas[(1:9),]
+head(Queimadas, n=9)
+#2
+tail(Queimadas,3)
+#3
+nrow(Queimadas)
+
+#4
+ncol(Queimadas)
+
+#5
+summary(Queimadas)
+
+#6
+str(Queimadas)
+
+#7
+length(unique(Queimadas$bioma))
+
+biomas <-(unique(Queimadas$bioma))
+biomas
+
+Queimadas$bioma= factor(Queimadas$bioma)
+levels(Queimadas$bioma)
+#8
+regiao_sul <- c("PARANÁ", "RIO GRANDE DO SUL", "SANTA CATARINA")
+regiao_norte <- toupper(c("Acre", "Amapá", "Amazonas","Pará")
+                        
+queimadas_sul <- subset(Queimadas, estado %in% regiao_sul )
+mean(queimadas_sul$avg_numero_dias_sem_chuva)
+
+```
+
+### DATA TABLE
+```{r}
+library(data.table)
+
+# Criar um data.table
+meu_data_table <- data.table(
+  nome = c("Alice", "Bob", "Carol", "Ana", "João", "Carlos", "Patrícia", "Leonardo"),
+  idade = c(25, 30, 28, 20, 27, 50, 60, 45),
+  salario = c(5000, 6000, 5500, 8000, 2000, 3500, 10000, 3800 ), 
+  meio_de_transporte = c('onibus', 'bicicleta', 'onibus', 'carro', 'carro', 'onibus', 'onibus', 'bicicleta'))
+meu_data_table
+
+class(meu_data_table)
+```
+
+
+
+
+```{r}
+# Importar um data.table e comparando o tempo de importação com o read.csv
+
+system.time(Queimadas <- fread("/home/est/chz23/CE302_2024_Aula/FireWatch/Queimadas.csv"))
+
+system.time(Queimadas <- read.csv("/home/est/chz23/CE302_2024_Aula/FireWatch/Queimadas.csv"))
+```
+
+
+### SINTAXE E OPERAÇÕES
+```{r}
+# Selecionar colunas e filtrar linhas
+resultado <- meu_data_table[idade > 25, .(nome, salario)]
+resultado
+
+# Agregar dados 
+agregado <- meu_data_table[, .(media_salario = mean(salario)),]
+agregado
+
+# Agregar dados por idade
+agregado_idade <- meu_data_table[, .(media_salario = mean(salario)), by = idade]
+agregado_idade
+
+# Agregar dados por meio_de_transporte
+agregado_mt <- meu_data_table[, .(media_salario = mean(salario)), by = meio_de_transporte]
+agregado_mt
+```
+
+### tible
+```{r}
+require(tibble)
+require(magrittr)
+require(dplyr)
+
+meu_tibble <- tibble(
+  nome = c("Alice", "Bob", "Carol", "Ana", "João", "Carlos", "Patrícia", "Leonardo"),
+  idade = c(25, 30, 28, 20, 27, 50, 60, 45),
+  salario = c(5000, 6000, 5500, 8000, 2000, 3500, 10000, 3800 ), 
+  meio_de_transporte = c('onibus', 'bicicleta', 'onibus', 'carro', 'carro', 'onibus', 'onibus', 'bicicleta'))
+meu_tibble
+
+glimpse(meu_tibble)
+
+meu_tibble$nova_coluna <- c(1, 2, 3, 4, 5, 6, 7, 8)
+meu_tibble
+
+meu_tibble <- mutate(meu_tibble, `minha coluna` = 1:8)
+
+meu_tibble <-  rename(meu_tibble, idade_anos = idade)
+meu_tibble
+
+meu_tibble_sem_salario <- select(meu_tibble, -salario)
+meu_tibble_sem_salario
+
+# Filtrar e ordenar
+resultado <- filter(meu_tibble, idade_anos > 25) 
+arrange(resultado, desc(salario))
+
+# Agregar por idade e calcular média de salários
+agregado_por_idade <-  group_by(meu_tibble, idade_anos) 
+
+summarize(agregado_por_idade, media_salario = mean(salario))
+```
+
+###LISTAS
+```{r}
+# Exemplo de criação de lista
+
+minha_lista <- list(
+  vetor = c(1, 2, 3, 4, 5),
+  matriz = matrix(1:9, nrow = 3),
+  data_frame = data.frame(
+    nome = c("Alice", "Bob", "Carol"),
+    idade = c(25, 30, 28)
+  ),
+  lista_aninhada = list(
+    vetor_aninhado = c(10, 20, 30),
+    matriz_aninhada = matrix(1:4, nrow = 2)
+  )
+)
+minha_lista
+
+# Acessar elementos da lista
+elemento1 <- minha_lista[[1]]  # Acessar o primeiro elemento
+elemento2 <- minha_lista$data_frame  # Acessar o data frame
+elemento3 <- minha_lista$lista_aninhada$vetor_aninhado  # Acessar o vetor aninhado
+
+# Adicionar elementos a uma lista
+minha_lista$nova_lista <- list(novo_vetor = c(1, 2, 3), nova_matriz = matrix(1:4, nrow = 2))
+minha_lista
+```
+
