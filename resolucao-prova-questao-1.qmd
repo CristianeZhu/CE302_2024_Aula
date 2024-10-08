@@ -1,0 +1,93 @@
+---
+title: "Resolução questão 1"
+author: "Cristiane Zhu"
+format: html
+editor: visual
+---
+
+# Matrizes e fórmulas
+
+```{r}
+matriz_a <- matrix(c(28,17,44,25,23,
+                     2,4,17,16,5,
+                     45,28,2,7,15,
+                     15,33,44,33,18,
+                     22,11,13,30,14), nrow=5, byrow= TRUE)
+matriz_a
+
+
+
+matriz_b <- matrix(c(33,30,17,7,8,
+                     30,46,50,22,8,
+                     15,5,39,45,37,
+                     48,5,0,6,46,
+                     2,24,6,8,49),nrow=5, byrow= TRUE)
+matriz_b
+
+C <- solve(tcrossprod(matriz_a,matriz_b))
+
+P <- matriz_b*crossprod(matriz_b,matriz_b)*t(matriz_b)
+```
+
+# Letra a (errado)
+
+```{r}
+## Considere a matriz de projeção P. A soma de seus autovetores é dada por 2,4594
+autovetor <- eigen(P)
+autovetor
+sum(autovetor$vectors)
+
+sum(autovetor$values) ## se fosse autovalor
+```
+
+# Letra b (errado)
+
+```{r}
+## a soma dos valores absolutos da diagonal da matriz C é -0,0094
+diagonal <- diag(C)
+abs(sum(diagonal))
+```
+
+# Letra c (correto)
+
+```{r}
+det_abs <-abs(det(matriz_a))
+log_a <-log10(det_abs)
+log_a
+
+det_abs_b <-abs(det(matriz_b))
+log_b <-log10(det_abs_b)
+log_b
+
+prod_matricial <- matriz_a %*% matriz_b
+deter_prod_matri <- abs(det(prod_matricial))
+log_prod_matri <- log10(deter_prod_matri)
+log_prod_matri
+```
+
+# Letra d (errado)
+
+```{r}
+## A soma de uma matriz triangular inferior para a matriz A
+sum(matriz_a[lower.tri(matriz_a)])
+
+sum(lower.tri(matriz_a)) ## errado, vai contar quantos valores são da diag inferior (nesse caso: 10)
+```
+
+# Letra e (correto, todos são complexos)
+
+```{r}
+## A matriz B possui pelo menos um autovalor complexo ( q tem i)
+aut <- eigen(matriz_b)
+aut$values
+
+
+##O maior elemento da diagonal do inverso da matriz resultante do produto matricial entre A e o transposto de B é 0,026.
+prod_matri <- matriz_a %*% t(matriz_b)
+inv <- solve(prod_matri)
+diagonal <- diag(inv)
+max(diagonal)
+
+#
+max(diag(solve(matriz_a %*% t(matriz_b))))
+```
