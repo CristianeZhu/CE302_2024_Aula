@@ -267,6 +267,8 @@ arrange(resultado, desc(salario))
 agregado_por_idade <-  group_by(meu_tibble, idade_anos) 
 
 summarize(agregado_por_idade, media_salario = mean(salario))
+
+### read token
 ```
 
 ###LISTAS
