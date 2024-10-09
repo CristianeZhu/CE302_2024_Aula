@@ -1,0 +1,160 @@
+---
+title: "Aula 5"
+author: "Cristiane Zhu"
+format: html
+editor: visual
+---
+
+```{r}
+install.packages("tzdb")
+library(tidyverse)
+
+## dplyr:: filter()
+## dplyr ::: filter()
+
+dados <- readr::read_csv("/home/est/chz23/CE302_2024_Aula/TB(3).csv")
+dados_mental <- readr::read_csv("/home/est/chz23/CE302_2024_Aula/Mental Health Dataset.csv")
+dados_Brazil <- readr::read_csv("/home/est/chz23/CE302_2024_Aula/Brazil Total highway crashes 2010 - 2023(1).csv")
+
+class(dados_mental)
+head(dados_mental)
+glimpse(dados_mental)
+```
+
+
+```{r}
+Poland <- subset(dados_mental, Country== "Poland")
+Poland
+
+Colunas <- dados_mental[, c("Country", "Gender")]
+```
+
+
+## Pipe
+```{r}
+x <- seq(1:10)
+y <- sqrt(x)
+z <- log(y)
+
+cos(log(sqrt(x)))
+
+require(magrittr)
+
+## %>% ctrl shift m
+x %>%
+  sqrt() %>%
+  log() %>%
+  cos() %>% 
+
+ set.seed(123)
+
+#rnorm sorteia numeros aleatorios
+rnorm(10)    %>%
+  multiply_by(5) %>%
+  add(5)     
+```
+```{r}
+require(dplyr)
+require(tidyr)
+## Atribuição explicita
+meu_data_frame <- data.frame(
+  nome = c("Alice", "Bob", "Carol", "Ana", "João", "Carlos", "Patrícia", "Leonardo"),
+  idade = c(25, 30, 28, 20, 27, 50, 60, 45),
+  salario = c(5000, 6000, 5500, 8000, 2000, 3500, 10000, 3800 ), 
+  meio_de_transporte = c('onibus', 'bicicleta', 'onibus', 'carro', 'carro', 'onibus', 'onibus', 'bicicleta'))
+
+# criar uma nova variável
+meu_data_frame = meu_data_frame %>%
+  mutate(idade_25 = idade > 25)
+
+glimpse(meu_data_frame)
+
+
+## Atribuição implicita
+meu_data_frame %<>% 
+  mutate(idade_50 = idade > 50) %>%
+  mutate(idade_50 = idade > 30)
+glimpse(meu_data_frame)
+```
+
+
+```{r}
+car_crash <- readr::read_csv("/home/est/chz23/CE302_2024_Aula/Brazil Total highway crashes 2010 - 2023(1).csv")
+
+glimpse(car_crash)
+```
+
+
+## seleção de variáveis
+```{r}
+
+## criar uma variavel lógica
+car_crash %>% 
+  mutate(tipo_log = tipo_de_ocorrencia == "sem vítima") %>% 
+   select(where(is.logical))
+
+
+car_crash[, c("onibus", "moto")]
+car_crash %>% 
+  select("onibus", "moto") ## só colocar o nome das colunas
+
+car_crash %>% 
+  select(c(1:4, 9))
+ 
+#tirar variáveis 
+car_crash %>% 
+  select(-c(onibus, moto))
+
+## colunas que iniciam com
+car_crash %>% 
+  select(starts_with("tr")) %>% 
+  head()
+
+## colunas que terminam com
+car_crash %>% 
+  select(ends_with("feridos")) %>% 
+  head()
+
+## colunas que contêm
+car_crash %>% 
+  select(contains("mente")) %>% 
+  head()
+
+## selecionar por variáveis numéricas
+car_crash %>% 
+  select(where(is.numeric)) %>% 
+  glimpse()
+
+## selecionar por variáveis characters
+car_crash %>% 
+  select(where(is.character)) %>% 
+  glimpse()
+
+## selecionar por variáveis lógicas
+car_crash %>% 
+  select(where(is.logical)) %>% 
+  glimpse()
+
+
+```
+
+
+## seleção por critérios
+```{r}
+vars_interesse = c("automovel", "bicicleta", "onibus", "canoa")
+
+car_crash %>% 
+  select(automovel, bicicleta, onibus)
+
+## all of garante que todas as variáveis existam
+car_crash %>% 
+  select(all_of(vars_interesse)) %>% 
+  glimpse()
+
+
+vars_interesse2 = c("automovel", "bicicleta", "onibus", "trator")
+car_crash %>% 
+  select(any_of(vars_interesse2)) %>% 
+  glimpse()
+```
+

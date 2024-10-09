@@ -1,0 +1,88 @@
+---
+title: "Exercícios 2"
+author: "Cristiane Zhu"
+format: html
+editor: visual
+---
+### Exercícios 2 
+
+# Exercícios 1 - 6
+#Atribuição de variáveis
+
+idade <- 25 
+nome <- 'Maria'
+notas <- c(8,9,7,6)
+frutas <- c("maçã", "banana", "laranja")
+idades <- c(30,40,50)
+vetor_logico <- c(TRUE, FALSE, TRUE)
+
+#Exercícios 7- 14
+#Criação de vetores
+vetor <- c(1:10)
+vetor2 <- seq(from=2, to=200, by=2)
+
+sequencia <- seq(from=2,
+               to= 20,
+               by=2)
+repetições <- rep(((1:10)%/%2), times=5)
+repetições
+
+numeros <- 1:10
+numeros
+n_pares <- numeros%/%2 == 0
+n_pares
+
+numeros[n_pares]
+repetições <- rep((1:10)%/%2==0, times=5)
+
+alturas <- seq(from=1.5,
+               to=2,
+              length.out=100 )
+alturas
+
+
+x <- rep(1:4, 2) ##repete a sequencia duas vezes
+v<- rep(1:4, each = 2) ##repete duas vezes cada número da sequencia
+
+## Exercícios 15 - 19
+##Operadores aritmétricos
+idade_multiplicada <- idade*2
+mean(notas)
+idades <- idades*2
+15 %/% 4 # divisão inteira
+15 %% 4 #resto da divisão
+
+
+## Operadores relacionais
+idade > 18
+notas[1] ==8
+idades[] < 35
+print( alturas <1.85 )
+alturas_selec
+
+
+##Funções matemáticas básicas
+raiz_quadrada <- sqrt(16)
+ceiling(3.78)
+ceiling(alturas)
+floor(alturas)
+abs(10-7)
+abs(7-10)
+
+## R base e string
+tema <- "Análise de Dados"
+substr(x=tema[1], start=1, stop=5) ##extrair  caracteres
+y <- "R é uma linguagem de programação"
+toupper(y) #deixa tudo maiúsculo
+tolower(y) #deixa tudo minúsculo
+f <- "linguagem"
+substituir_frase <- gsub("linguagem", "software", f)
+substituir_frase
+
+
+##Regex
+install.packages("stringr")
+require(stringr)
+palavras <-c("casa", "carro", "frutas", "animais" , "cidade")
+str_detect(palavras,"c")
+

@@ -5,7 +5,8 @@ format: html
 editor: visual
 ---
 
-## DATA FRAMES 
+## DATA FRAMES
+
 ```{r}
 meu_df <- data.frame( x= c(1:10),
                       y= LETTERS[1:10])
@@ -31,6 +32,7 @@ str(meu_data_frame) ## visão ogeral do data frame
 ```
 
 ## ACESSANDO COLUNAS
+
 ```{r}
 # Acessar coluna usando o operador $
 meu_data_frame$nome
@@ -49,8 +51,8 @@ meu_data_frame$gosta_do_bolo_do_joaquim <- c(TRUE, FALSE, FALSE, TRUE, TRUE, TRU
 meu_data_frame$constante = "Sim"
 ```
 
+## FILTROS
 
-## FILTROS 
 ```{r}
  # Seleciona pessoas com idade maior que 28
 subconjunto_df <- meu_data_frame[meu_data_frame$idade > 28, ]
@@ -70,9 +72,8 @@ nrow(meu_data_frame) #n de linhas
 ncol(meu_data_frame) # n de colunas
 ```
 
-
-
 ## SUMMARY E BY
+
 ```{r}
 summary(meu_data_frame)
 
@@ -85,9 +86,8 @@ ordenado <- meu_data_frame[order(meu_data_frame$idade), ]
 ordenado
 ```
 
-
-
 ## fatores
+
 ```{r}
 ## variavel qualitativa com categorias
 # Exemplo de criação de fator
@@ -123,8 +123,8 @@ margin.table( tabela, 2) # coluna
 
 ```
 
-
 ## lendo banco de dados
+
 ```{r}
 # Lendo os dados de queimadas
 Queimadas_Q1 <- read.csv("/home/est/chz23/CE302_2024_Aula/FireWatch/Dataset_FireWatch_Brazil_Q1_2024.csv")
@@ -151,8 +151,8 @@ nrow(Queimadas_Q1) +nrow(Queimadas_Q2) + nrow(Queimadas_Q3)
 write.csv(Queimadas, file = "/home/est/chz23/CE302_2024_Aula/FireWatch/Queimadas.csv", row.names = FALSE)
 ```
 
-
 ## EXERCÍCIOS
+
 ```{r}
 #1
 Queimadas[(1:9),]
@@ -189,6 +189,7 @@ mean(queimadas_sul$avg_numero_dias_sem_chuva)
 ```
 
 ### DATA TABLE
+
 ```{r}
 library(data.table)
 
@@ -203,9 +204,6 @@ meu_data_table
 class(meu_data_table)
 ```
 
-
-
-
 ```{r}
 # Importar um data.table e comparando o tempo de importação com o read.csv
 
@@ -214,8 +212,8 @@ system.time(Queimadas <- fread("/home/est/chz23/CE302_2024_Aula/FireWatch/Queima
 system.time(Queimadas <- read.csv("/home/est/chz23/CE302_2024_Aula/FireWatch/Queimadas.csv"))
 ```
 
-
 ### SINTAXE E OPERAÇÕES
+
 ```{r}
 # Selecionar colunas e filtrar linhas
 resultado <- meu_data_table[idade > 25, .(nome, salario)]
@@ -235,6 +233,7 @@ agregado_mt
 ```
 
 ### tible
+
 ```{r}
 require(tibble)
 require(magrittr)
@@ -271,6 +270,7 @@ summarize(agregado_por_idade, media_salario = mean(salario))
 ```
 
 ###LISTAS
+
 ```{r}
 # Exemplo de criação de lista
 
@@ -297,4 +297,3 @@ elemento3 <- minha_lista$lista_aninhada$vetor_aninhado  # Acessar o vetor aninha
 minha_lista$nova_lista <- list(novo_vetor = c(1, 2, 3), nova_matriz = matrix(1:4, nrow = 2))
 minha_lista
 ```
-
