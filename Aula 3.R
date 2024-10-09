@@ -261,7 +261,7 @@ A
 multiplicacao_escalar <- k * A
 multiplicacao_escalar
 
-#PRODUTO ELEMENTO A ELEMENT
+#PRODUTO ELEMENTO A ELEMENTO
 produto_elemento_a_elemento <- A * B ## multiplica cada um dos elementos
 produto_elemento_a_elemento
 
@@ -269,7 +269,7 @@ produto_elemento_a_elemento
 produto_matricial <- A %*% B
 produto_matricial
 
-# TRANSPOSTA
+# TRANSPOSTA (A^T)
 transposta_A <- t(A)
 transposta_A
 
@@ -286,6 +286,7 @@ diagonal_A <- diag(A)
 diagonal_A # resulta num vetor
 
 # AUTOVALORES E AUTOVETORES
+## o resultado vai ser values( autovalores) e vectors(autovetores)
 autovalores_autovetores_A <- eigen(A)
 autovalores_autovetores_A
 
