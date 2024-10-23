@@ -1,0 +1,280 @@
+---
+title: "Aula 6"
+author: "Cristiane Zhu"
+format: html
+editor: visual
+---
+
+
+```{r}
+require(dplyr)
+require(tidyr)
+require(data.table)
+car_crash <- fread("Brazil Total highway crashes 2010 - 2023(1).csv")
+
+car_crash %>% 
+  select(moto, starts_with("tr"), ends_with("feridos"))
+
+# vetorizou
+car_crash %>% 
+  pull(moto)
+
+# data frame de moto
+car_crash %>% 
+  select(moto)
+
+car_crash %>% 
+  select(moto, automovel,data) %>% 
+  filter(moto >2 | automovel== 2)
+```
+
+
+```{r}
+car_crash %>% 
+  group_by(tipo_de_ocorrencia) %>% 
+  summarise(media= mean( automovel, na.rm = T),
+            n= n()) %>% 
+  View
+
+car_crash %>% 
+  filter(tipo_de_ocorrencia %in% c("sem vítima", "com vítima") %>% 
+  group_by(tipo_de_ocorrencia) %>% 
+  summarise(media_carros = mean(automovel, na.rm =T),
+            media_motos = mean(moto, na.rm = T),
+            mediana_carro= mean(automovel, na.rm = T),
+            n= n(),
+            quantil_25 = quantile(automovel, probs= 0.25, na.rm = T))
+
+
+car_crash %>% 
+  filter(tipo_de_ocorrencia %in% c("sem vítima", "com vítima") & tipo_de_acidente %in% c( "Colisão Traseira", "Saída de Pista")) %>% 
+  group_by(tipo_de_ocorrencia) %>% 
+  summarise(media_carros = mean(automovel, na.rm =T),
+            media_motos = mean(moto, na.rm = T),
+            mediana_carro= mean(automovel, na.rm = T),
+            n= n(),
+            quantil_25 = quantile(automovel, probs= 0.25, na.rm = T))
+
+# contar 
+car_crash %>% 
+  group_by(tipo_de_ocorrencia) %>% 
+  
+```
+
+
+```{r}
+#1- a
+car_crash %>% 
+  select(data, tipo_de_ocorrencia, automovel, bicicleta, onibus, caminhao, moto, trator_maquinas, outros) %>% 
+  mutate(total= n())
+
+# b
+car_crash %>% 
+  select(contains("feridos"))
+#c 
+car_crash %>% 
+  select(where(is.numeric))
+
+# d
+car_crash %>% 
+  select(where(is.logical))
+
+# e
+car_crash %>% 
+  select(ends_with("o"))
+
+#f 
+car_crash %>% 
+  select(starts_with("t"))
+
+# g
+car_crash %>% 
+  filter(automovel >= 5 & moto== 3)
+
+# h
+car_crash %>% 
+  filter(automovel >= 5 | moto== 3)
+
+# i
+car_crash %>% 
+  filter(tipo_de_ocorrencia %in% "com vítima")
+
+# j
+car_crash %>% 
+  filter(( automovel >= 5 | moto ==3 ) & lugar_acidente %in% c("Autopista Regis Bittencourt", "Autopista Litoral Sul", "Via Sul"))
+```
+
+
+```{r}
+dados_starwars <- starwars
+dados_starwars %>% 
+  group_by(species) %>% 
+  distinct(species) %>% 
+  
+```
+
+
+# Datas
+```{r}
+# String representando uma data
+data_string <- "2024-10-23"
+
+# Transformando a string em data
+data <- as.Date(data_string)
+
+# Exibindo a data
+print(data)
+
+data_string <- "23/10/2024"
+
+data <- as.Date(data_string, 
+                format = "%d/%m/%Y") ## y minusculo seria dois caracteres
+print(data)
+
+# Somando dias
+data2 <- data + 7  # Adicionando 7 dias
+data3 <- data - 1  # Subtraindo 1 dia
+
+## extrair dia, mes, data
+data <- as.Date("2023-08-21")
+ano <- format(data, "%Y")
+mes <- format(data, "%m")
+dia <- format(data, "%d")
+
+## diferença datas
+data1 <- as.Date("2023-08-21")
+data2 <- as.Date("2023-08-15")
+diferenca <- difftime(data1, data2, units = "days")  # Diferença em dias
+```
+
+
+## Datas com Lubridate
+```{r}
+install.packages("lubridate")
+require(lubridate)
+data_ymd <- ymd("2023-08-21")
+data_mdy <- mdy("08-21-2023")
+data_dmy <- dmy("21-08-2023")
+
+print(data_ymd)
+
+data <- ymd("2024-10-23")
+data_nova <- data + days(7)  # Adiciona 7 dias
+data_anterior <- data - months(2)  # Subtrai 2 meses
+
+print(data_nova)
+print(data_anterior)
+
+## extraindo informações de datas
+data <- ymd_hms("2023-08-21 15:30:45")
+ano <- year(data)
+mes <- month(data)
+dia <- day(data)
+hora <- hour(data)
+minuto <- minute(data)
+segundo <- second(data)
+
+print(ano)
+
+data1 <- ymd("2023-08-21")
+data2 <- ymd("2023-08-15")
+diferenca_em_dias <- as.numeric(data2 - data1)
+diferenca_em_semanas <- as.numeric(weeks(data2 - data1))
+
+print(diferenca_em_dias)
+print(diferenca_em_semanas)
+```
+
+
+
+# fuso horarios
+```{r}
+# Data original no fuso horário de Nova Iorque
+data_ny <- ymd_hms("2023-08-21 12:00:00", tz = "America/New_York")
+
+# Converter para o fuso horário de Londres
+data_london <- with_tz(data_ny, tz = "Europe/London")
+
+print(data_ny)
+```
+
+```{r}
+car_crash2 =car_crash %>% 
+  mutate(nova_data= as.Date(data, format= "%d/%m/%Y")) %>% 
+  mutate(novo_horario= hms(horario)) %>% 
+  mutate(mes= month(nova_data),
+         ano= year(nova_data),
+         dia= day(nova_data))
+
+car_crash2 %>% 
+  group_by(mes) %>% 
+  summarise(total_mes= n()) %>% 
+  summarise(total_mes== max(total_mes))
+  
+
+```
+
+
+```{r}
+require(nycflights13)
+planes
+airlines
+airports
+
+planes %>% 
+  count(tailnum) %>%
+  filter(n > 1)
+
+planes %>% 
+  group_by(tailnum) %>% 
+  summarise(n=n()) %>% 
+  filter(n> 1)
+
+weather %>%
+  count(time_hour, origin) %>%
+  filter(n > 1)
+```
+
+```{r}
+flights2 <- flights %>% 
+  filter(distance > 2000) %>% 
+  select(year, time_hour, origin, dest, tailnum, carrier)
+flights2
+
+# LEFT JOIN
+flights2_airlines = 
+  flights2  %>% 
+  left_join(., airlines)
+
+flights2_airlines = 
+  flights2  %>% 
+  left_join(., airlines, 
+            by = c("carrier"= "carrier")
+            
+## RIGHT JOIN
+planes_flights = flights2 %>% 
+  right_join(planes, by = "tailnum")
+
+#INNER JOIN
+origin_flights = flights2 %>% 
+  inner_join(airports, by = c("origin"= "faa"))
+
+origin_flights = flights2 %>% 
+  inner_join(airports, join_by(origin == faa))
+
+
+## FULL JOIN
+dest_flights = flights2 %>% 
+  full_join(airports, by = c("dest"= "faa"))
+
+dest_flights = flights2 %>% 
+  full_join(airports, join_by(dest == faa))
+```
+
+
+## JUNÇÕES DE FILTRAGEM
+```{r}
+airports %>% 
+  semi_join(flights2, join_by(faa == origin))
+```
+
