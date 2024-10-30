@@ -1,0 +1,238 @@
+---
+title: "Aula 7"
+author: "Cristiane Zhu"
+format: html
+editor: visual
+---
+## Organização de dados
+
+```{r}
+require(tidyverse)
+require(magrittr)
+dados <- table1
+
+
+table1 %>% 
+  select(country, year, cases) %>% 
+  pivot_wider(names_from = year, 
+              values_from = cases,
+              names_prefix = "ano_",
+              )
+table1 %>% 
+  pivot_wider(names_from = year, 
+              values_from = cases,
+              names_prefix = "ano_",
+              values_fill = 0,
+              values_fn = min
+              )
+```
+
+
+```{r}
+table1 %>% 
+  pivot_longer(cols = -c(country, year), 
+               names_to = "variavel", 
+               values_to = "tamanho")
+```
+
+## separando observações
+```{r}
+table3
+
+# separar
+separated = table3 %>% 
+  separate(rate, into = c("cases", "population"))
+
+## unir
+separated %>% 
+  unite(rate, cases, population, sep = "/")
+
+```
+
+
+```{r}
+require(data.table)
+TB <- fread("TB(3).csv.gz")
+
+TB1 <- TB %>% 
+  pivot_longer(
+    cols = -c(1:4), 
+    names_to = "chave", 
+    values_to = "casos", 
+    values_drop_na = TRUE
+  )
+TB1
+
+TB1 %>% 
+  count(chave)
+
+TB1 %<>% filter(chave %like% "^new")
+```
+
+```{r}
+TB2 <- TB1 %>% 
+  mutate(chave = stringr::str_replace(chave, "newrel", "new_rel"))
+TB2
+
+TB3 <- TB2 %>% 
+  separate(chave, c("new", "type", "sexage"), 
+           sep = "_")
+TB3
+
+#remover colunas desnecessárias
+TB4 <- TB3 %>% 
+  select(-new, -iso2, -iso3)
+
+# separar sexo e idade
+TB5 <- TB4 %>% 
+  separate(sexage, c("sexo", "idade"), sep = 1)
+TB5
+```
+
+
+## strings
+```{r}
+var_com_aspas <- "Ela disse: 'Eu adoro lasanha.'"
+var_com_aspas
+
+str_view(var_com_aspas)
+
+var_com_aspas3 <- "Ela disse: \"Eu adoro lasanha.\""
+var_com_aspas3
+str_view(var_com_aspas3)
+```
+
+## caracteres especiais
+```{r}
+texto <- "Isso é um exemplo de texto com espaços em branco."
+str_view(texto)
+
+texto_multilinhas <- "Primeira linha\nSegunda linha\nTerceira linha"
+str_view(texto_multilinhas)
+
+texto_tabulado <- "Primeira coluna\tSegunda coluna\tTerceira coluna" 
+str_view(texto_tabulado)
+
+texto_com_barras <- "Isso é uma única barra invertida: \\"
+str_view(texto_com_barras)
+
+texto_unicode_grau <- "A temperatura é de 25\u00B0C."
+str_view(texto_unicode_grau)
+```
+
+
+# concatenando atrings
+```{r}
+## combinar strings
+df <- data.frame(nome = c("Ana", "Maria", "João", NA), 
+                 sobrenome= c("Santos", "Silva", "Souza", NA))
+df %>% 
+  mutate(ola = str_c("Boa noite ", nome, " ", sobrenome, "!"))
+
+#
+df %>% 
+  mutate(mensagem = str_glue("Boa noite {nome} {sobrenome}!"))
+```
+
+
+```{r}
+## juntar strings
+df$nome %>% 
+  str_flatten(na.rm = TRUE)
+
+df$nome %>% 
+  str_flatten(na.rm = TRUE, collapse = ", ", last = " e ")
+
+
+## Separar strings
+df %<>% 
+  mutate(Nome_Sobrenome = str_c(nome, sobrenome, sep = " "))
+
+df$Nome_Sobrenome %>% 
+  str_split(., " ", simplify = TRUE)
+```
+
+
+## formatação básica 
+```{r}
+texto_exemplo = c("caixa baixa", "CAIXA ALTA", "Texto de sentença", "Texto Em Título")
+str_to_lower(texto_exemplo)
+str_to_upper(texto_exemplo)
+
+# primeira letra em maiúsculo
+str_to_sentence(texto_exemplo)
+
+# primeira letra de todas palavras em maiusculo
+str_to_title(texto_exemplo)
+```
+
+```{r}
+texto_com_espaços = "  Olá, esse texto tem    diversos        espaços completamente desnecessários. "
+
+str_trim(texto_com_espaços, side = "left")
+str_trim(texto_com_espaços, side = "right")
+str_trim(texto_com_espaços, side = "both")
+
+str_squish(texto_com_espaços)
+```
+
+## comprimento de strings
+```{r}
+df %>% 
+  mutate(comprimento_nome = str_length(nome))
+
+## contar caracteres específicos
+df %>% 
+  mutate(qtd_a = str_count(nome, "a"))
+
+df %>% 
+  mutate(qtd_vogais = str_count(nome, "[aeiou]")) %>%
+  mutate(qtd_consoantes = str_count(nome, "[^aeiou]")) #negando vogal(dentro de colchetes)
+
+```
+# substituição de string
+```{r}
+df %>% 
+  mutate(nome = str_replace(nome, "ã", "a"))
+
+# remove tudo que aparece pela primeira vez
+df %>% 
+  mutate(nome = str_remove(nome, "[aeiouã]"))
+
+## remove todas as instâncias
+df %>% 
+  mutate(nome = str_remove_all(nome, "[aeiouã]"))
+```
+
+
+# expressões regulares
+```{r}
+texto <- c("O rato correu para o buraco.", 
+           "O gato correu para o buraco.",
+           "O mato.")
+padrao <- "(g|r)ato"
+str_detect(texto, padrao)
+
+texto <- c("Banana", "Ana", "Ananas")
+padrao <- "^ana"
+str_detect(texto, padrao)
+
+#algum texto
+## Ignorar case
+str_detect(texto, "(?i)ana")
+
+## Ignorar case, terminar com ana
+str_detect(texto, "(?i)ana$")
+
+## Ignorar case, começar com ana
+str_detect(texto, "(?i)^ana")
+
+## Ignorar case, exatamente  ana
+str_detect(texto, "(?i)^ana$")
+```
+
+# subexpressões
+```{r}
+
+```
+
