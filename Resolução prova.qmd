@@ -1,0 +1,244 @@
+---
+title: "Resolução prova"
+author: "Cristiane Zhu"
+format: html
+editor: visual
+---
+
+# Exercício 2
+```{r}
+require(data.table)
+require(tidyr)
+require(tidyverse)
+require(dplyr)
+require(magrittr)
+require(lubridate)
+dados_chocolate <- fread("chocolate (1).csv")
+```
+
+#Existem 2443 países que produzem chocolate.
+```{r}
+## Falso: tem 67
+paises <- dados_chocolate %>% 
+  select(local_compania) %>% 
+  distinct(local_compania) %>% 
+  summarise(count=n())
+```
+# Existem 104 chocolates com 4 ingredientes que são descritos por 2 características.
+
+```{r}
+# Vdd
+chocolate <- dados_chocolate %>% 
+  select(caracteristicas, ingredientes) %>%
+  mutate(n_carac = lengths(strsplit(caracteristicas, ","))) %>% 
+  filter(ingredientes %like% "4" & n_carac == "2") %>% 
+  summarise(qtde= n())
+  
+```
+# A frequência absoluta para chocolates que contenham 5 ingredientes é 750.
+
+```{r}
+#Falso : tem 191
+cinco_ingredientes <- dados_chocolate %>% 
+  select(ingredientes) %>% 
+  filter(ingredientes %like% "5") %>% 
+  summarise(freq_abs = n())
+```
+
+#As 8 caracterististicas mais marcantes dos chocolates são sweet, nutty, cocoa, roasty, creamy, earthy, sandy e fatty e juntas correspondem a 1663 descrições dos chocolates.
+```{r}
+#Vdd
+caracteristicas_chocolate <- dados_chocolate %>%
+  select(caracteristicas) %>% 
+  separate_rows(caracteristicas, sep = ",") %>%
+  mutate(sem_espaço = str_trim(caracteristicas, side= "both")) %>%
+  group_by(sem_espaço) %>%
+  summarise(frequencia = n()) %>%
+  arrange(desc(frequencia))
+
+
+palavras_chave <- c("sweet", "nutty", "cocoa", "roasty", "creamy", "earthy", "sandy", "fatty")
+
+soma <- caracteristicas_chocolate %>% 
+  filter(sem_espaço %in% palavras_chave) %>% 
+  summarise(soma= sum(frequencia))
+```
+#Existem 81 chocolates que incluem o ingrediente Adoçante em sua composição.
+
+```{r}
+# Falso :76
+require(stringr)
+adoçante <- dados_chocolate %>% 
+  select(ingredientes) %>% 
+  filter(str_detect(ingredientes,"S\\*")) %>% 
+  summarise(n= n())
+```
+
+
+```{r}
+art <- fread("Art.csv")
+art_moma <- fread("Art_Moma.csv")
+
+glimpse(art)
+glimpse(art_moma)
+
+
+artes <- art %>% 
+  inner_join(art_moma, by = c("artist_unique_id" = "artist_unique_id"))
+
+```
+
+
+# Os 3 artista(s) com mais exposições no The Whitney classificados em ordem decrescente de exposições são: Edward Hopper, Georgia O’Keeffe e Stuart Davis.
+```{r}
+#VDD
+exposiçoes <- artes %>% 
+  select(whitney_count_to_year, artist_name) %>% 
+  group_by(artist_name) %>% 
+  summarise(n_exposiçoes = sum(whitney_count_to_year)) %>% 
+  arrange(desc(n_exposiçoes))
+  
+```
+
+# Do total de artistas, 152 são Swiss, Mexican ou Japanese.
+```{r}
+# Falso : 26
+unique(artes$artist_name)
+naci <- unique(artes$artist_nationality)
+
+nacionalidade <- artes %>% 
+  select(artist_name, artist_nationality) %>%
+  distinct(artist_name, .keep_all = TRUE) %>%
+  group_by(artist_nationality)  %>% 
+  summarise(n= n())
+
+palavras_chave2 <- c("Swiss", "Mexican", "Japanese")
+
+artistas <- nacionalidade %>% 
+  filter(artist_nationality %in% palavras_chave2)
+
+sum(artistas$n) 
+
+```
+
+# Apenas 6 artista(s) com a nacionalidade Swiss tiveram entre 0 e 1 exposições no The Whitney.
+```{r}
+# Falso : 5
+s <- "Swiss"
+swiss <- artes %>% 
+  select(artist_name,artist_nationality , whitney_count_to_year) %>% 
+  filter(artist_nationality %in% s) %>% 
+  group_by(artist_name) %>% 
+  summarise(soma= sum(whitney_count_to_year)) %>% 
+  filter(soma >= 0 & soma <= 1) 
+  
+```
+
+# A diferença entre a média de páginas para artistas Brancos e Não Brancos no ano de 2007 é -0,24.
+```{r}
+# Falso: 0,24
+media <- artes %>% 
+  select(artist_race,space_ratio_per_page_total,year) %>% 
+  filter(year == 2007) %>% 
+  filter(artist_race %like% "White") %>% 
+  summarise(mediaa= mean(space_ratio_per_page_total))
+
+media2 <- artes %>% 
+  select(artist_race,space_ratio_per_page_total,year) %>% 
+  filter(year == 2007) %>% 
+  filter(artist_race != "White") %>% 
+  summarise(mediaa= mean(space_ratio_per_page_total))
+
+dif <- media- media2
+dif
+```
+# Dos artista(s) que expuseram no The Whitney, apenas 164 aparecem nos livros ‘Gardner’ e ‘Janson’.
+
+```{r}
+# Falso : 40
+artistas <- artes %>% 
+  select(artist_name,whitney_count_to_year, book) %>% 
+  filter(whitney_count_to_year != 0) %>% 
+  group_by(artist_name, book) %>% 
+  summarise(f=n(), .groups = 'drop') %>% 
+  filter(duplicated(artist_name) )
+  
+```
+
+
+# Exercício 4
+```{r}
+refugiados <- fread("refugiados (1).csv")
+refugiados2 <- fread("refugiados_pais.csv")
+
+glimpse(refugiados)
+glimpse(refugiados2)
+
+refugiados3 <- refugiados %>% 
+  left_join(refugiados2, by= c("id_origem"="id") ) %>% 
+  left_join(refugiados2, by= c("id_destino"= "id"),  suffix = c("_origem", "_destino"))
+```
+
+
+#A matriz de migração [origem, destino] intercontinental do ano 2006 é dada por: |Região |Africa |Americas|Asia |Europe|Oceania| |——–|——-|——–|——-|——|——-| |Africa |2507581|262745 |98175 |250070|37124 | |Americas|0 |150149 |0 |14850 |174 | |Asia |76780 |308706 |4411284|664075|42704 | |Europe |94 |306672 |7816 |454237|3423 | |Oceania |0 |1679 |0 |92 |59 |
+```{r}
+#Vdd
+matriz <- refugiados3 %>% 
+  select(refugiados, regiao_origem, regiao_destino, ano) %>% 
+  filter(ano == 2006) %>% 
+  group_by(regiao_origem, regiao_destino) %>% 
+  summarise(totall_imi= sum(refugiados)) %>% 
+  pivot_wider(names_from = regiao_destino, values_from = totall_imi, values_fill = 0)
+
+  
+
+```
+#A partir de 1972 houveram 172075 refugiados partindo do país: Afghanistan para o país: Canada, e 219920 refugiados partindo do país: Pakistan para o país: Canada.
+```{r}
+# Falso : 172022 e 219988
+ref4 <- refugiados3 %>% 
+  select(ano, id_origem, nome_destino, refugiados) %>% 
+  filter(ano >= 1972) %>% 
+  filter(id_origem== "AFG" & nome_destino== "Canada") %>% 
+  summarise(n= sum(refugiados))
+
+ref5 <- refugiados3 %>% 
+  select(ano, id_origem, nome_destino, refugiados) %>% 
+  filter(ano >= 1972) %>% 
+  filter(id_origem== "PAK" & nome_destino== "Canada") %>% 
+  summarise(n= sum(refugiados))
+```
+#Os 5 países que mais enviaram refugiados no ano de 1965 pertencem às subregiões Sub-Saharan Africa e Southern Europe.
+```{r}
+# Falso
+ref6 <- refugiados3 %>% 
+  select(ano,subregiao_origem, refugiados, nome_origem) %>% 
+  filter(ano == 1965) %>% 
+  group_by(nome_origem, subregiao_origem) %>% 
+  summarise(n=sum(refugiados)) %>% 
+  arrange(n)
+  
+```
+
+
+#Os 6 países que mais receberam refugiados a partir de 1982 receberam juntos 19523 refugiados.
+```{r}
+# Falso: 252559819	
+ref7 <- refugiados3 %>% 
+  select(nome_destino, ano, refugiados) %>% 
+  filter(ano >= 1982) %>% 
+  group_by(nome_destino) %>% 
+  summarise(n=sum(refugiados)) %>% 
+  arrange(desc(n)) %>% 
+  summarise(n2=sum(n[1:6]))
+```
+# Existem 27 países que receberam pelo menos 5382652 refugiados.
+```{r}
+# Falso : 30
+ref8 <- refugiados3 %>% 
+  select(nome_destino, refugiados) %>% 
+  group_by(nome_destino) %>% 
+  summarise(n=sum(refugiados)) %>% 
+  filter(n >= 5382652)
+```
+
