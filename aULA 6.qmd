@@ -5,7 +5,6 @@ format: html
 editor: visual
 ---
 
-
 ```{r}
 require(dplyr)
 require(tidyr)
@@ -27,7 +26,6 @@ car_crash %>%
   select(moto, automovel,data) %>% 
   filter(moto >2 | automovel== 2)
 ```
-
 
 ```{r}
 car_crash %>% 
@@ -60,7 +58,6 @@ car_crash %>%
   group_by(tipo_de_ocorrencia) %>% 
   
 ```
-
 
 ```{r}
 #1- a
@@ -104,7 +101,6 @@ car_crash %>%
   filter(( automovel >= 5 | moto ==3 ) & lugar_acidente %in% c("Autopista Regis Bittencourt", "Autopista Litoral Sul", "Via Sul"))
 ```
 
-
 ```{r}
 dados_starwars <- starwars
 dados_starwars %>% 
@@ -113,8 +109,8 @@ dados_starwars %>%
   
 ```
 
-
 # Datas
+
 ```{r}
 # String representando uma data
 data_string <- "2024-10-23"
@@ -147,8 +143,8 @@ data2 <- as.Date("2023-08-15")
 diferenca <- difftime(data1, data2, units = "days")  # Diferença em dias
 ```
 
-
 ## Datas com Lubridate
+
 ```{r}
 install.packages("lubridate")
 require(lubridate)
@@ -185,9 +181,8 @@ print(diferenca_em_dias)
 print(diferenca_em_semanas)
 ```
 
-
-
 # fuso horarios
+
 ```{r}
 # Data original no fuso horário de Nova Iorque
 data_ny <- ymd_hms("2023-08-21 12:00:00", tz = "America/New_York")
@@ -213,7 +208,6 @@ car_crash2 %>%
   
 
 ```
-
 
 ```{r}
 require(nycflights13)
@@ -271,10 +265,9 @@ dest_flights = flights2 %>%
   full_join(airports, join_by(dest == faa))
 ```
 
-
 ## JUNÇÕES DE FILTRAGEM
+
 ```{r}
 airports %>% 
   semi_join(flights2, join_by(faa == origin))
 ```
-
