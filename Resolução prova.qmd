@@ -6,6 +6,7 @@ editor: visual
 ---
 
 # Exercício 2
+
 ```{r}
 require(data.table)
 require(tidyr)
@@ -16,7 +17,8 @@ require(lubridate)
 dados_chocolate <- fread("chocolate (1).csv")
 ```
 
-#Existem 2443 países que produzem chocolate.
+# Existem 2443 países que produzem chocolate.
+
 ```{r}
 ## Falso: tem 67
 paises <- dados_chocolate %>% 
@@ -24,6 +26,7 @@ paises <- dados_chocolate %>%
   distinct(local_compania) %>% 
   summarise(count=n())
 ```
+
 # Existem 104 chocolates com 4 ingredientes que são descritos por 2 características.
 
 ```{r}
@@ -33,8 +36,9 @@ chocolate <- dados_chocolate %>%
   mutate(n_carac = lengths(strsplit(caracteristicas, ","))) %>% 
   filter(ingredientes %like% "4" & n_carac == "2") %>% 
   summarise(qtde= n())
-  
+
 ```
+
 # A frequência absoluta para chocolates que contenham 5 ingredientes é 750.
 
 ```{r}
@@ -45,7 +49,8 @@ cinco_ingredientes <- dados_chocolate %>%
   summarise(freq_abs = n())
 ```
 
-#As 8 caracterististicas mais marcantes dos chocolates são sweet, nutty, cocoa, roasty, creamy, earthy, sandy e fatty e juntas correspondem a 1663 descrições dos chocolates.
+# As 8 caracterististicas mais marcantes dos chocolates são sweet, nutty, cocoa, roasty, creamy, earthy, sandy e fatty e juntas correspondem a 1663 descrições dos chocolates.
+
 ```{r}
 #Vdd
 caracteristicas_chocolate <- dados_chocolate %>%
@@ -63,7 +68,8 @@ soma <- caracteristicas_chocolate %>%
   filter(sem_espaço %in% palavras_chave) %>% 
   summarise(soma= sum(frequencia))
 ```
-#Existem 81 chocolates que incluem o ingrediente Adoçante em sua composição.
+
+# Existem 81 chocolates que incluem o ingrediente Adoçante em sua composição.
 
 ```{r}
 # Falso :76
@@ -73,7 +79,6 @@ adoçante <- dados_chocolate %>%
   filter(str_detect(ingredientes,"S\\*")) %>% 
   summarise(n= n())
 ```
-
 
 ```{r}
 art <- fread("Art.csv")
@@ -88,8 +93,8 @@ artes <- art %>%
 
 ```
 
-
 # Os 3 artista(s) com mais exposições no The Whitney classificados em ordem decrescente de exposições são: Edward Hopper, Georgia O’Keeffe e Stuart Davis.
+
 ```{r}
 #VDD
 exposiçoes <- artes %>% 
@@ -101,6 +106,7 @@ exposiçoes <- artes %>%
 ```
 
 # Do total de artistas, 152 são Swiss, Mexican ou Japanese.
+
 ```{r}
 # Falso : 26
 unique(artes$artist_name)
@@ -122,6 +128,7 @@ sum(artistas$n)
 ```
 
 # Apenas 6 artista(s) com a nacionalidade Swiss tiveram entre 0 e 1 exposições no The Whitney.
+
 ```{r}
 # Falso : 5
 s <- "Swiss"
@@ -135,6 +142,7 @@ swiss <- artes %>%
 ```
 
 # A diferença entre a média de páginas para artistas Brancos e Não Brancos no ano de 2007 é -0,24.
+
 ```{r}
 # Falso: 0,24
 media <- artes %>% 
@@ -152,6 +160,7 @@ media2 <- artes %>%
 dif <- media- media2
 dif
 ```
+
 # Dos artista(s) que expuseram no The Whitney, apenas 164 aparecem nos livros ‘Gardner’ e ‘Janson’.
 
 ```{r}
@@ -165,8 +174,8 @@ artistas <- artes %>%
   
 ```
 
-
 # Exercício 4
+
 ```{r}
 refugiados <- fread("refugiados (1).csv")
 refugiados2 <- fread("refugiados_pais.csv")
@@ -179,8 +188,8 @@ refugiados3 <- refugiados %>%
   left_join(refugiados2, by= c("id_destino"= "id"),  suffix = c("_origem", "_destino"))
 ```
 
+#A matriz de migração \[origem, destino\] intercontinental do ano 2006 é dada por: \|Região \|Africa \|Americas\|Asia \|Europe\|Oceania\| \|——–\|——-\|——–\|——-\|——\|——-\| \|Africa \|2507581\|262745 \|98175 \|250070\|37124 \| \|Americas\|0 \|150149 \|0 \|14850 \|174 \| \|Asia \|76780 \|308706 \|4411284\|664075\|42704 \| \|Europe \|94 \|306672 \|7816 \|454237\|3423 \| \|Oceania \|0 \|1679 \|0 \|92 \|59 \|
 
-#A matriz de migração [origem, destino] intercontinental do ano 2006 é dada por: |Região |Africa |Americas|Asia |Europe|Oceania| |——–|——-|——–|——-|——|——-| |Africa |2507581|262745 |98175 |250070|37124 | |Americas|0 |150149 |0 |14850 |174 | |Asia |76780 |308706 |4411284|664075|42704 | |Europe |94 |306672 |7816 |454237|3423 | |Oceania |0 |1679 |0 |92 |59 |
 ```{r}
 #Vdd
 matriz <- refugiados3 %>% 
@@ -193,7 +202,9 @@ matriz <- refugiados3 %>%
   
 
 ```
+
 #A partir de 1972 houveram 172075 refugiados partindo do país: Afghanistan para o país: Canada, e 219920 refugiados partindo do país: Pakistan para o país: Canada.
+
 ```{r}
 # Falso : 172022 e 219988
 ref4 <- refugiados3 %>% 
@@ -208,7 +219,9 @@ ref5 <- refugiados3 %>%
   filter(id_origem== "PAK" & nome_destino== "Canada") %>% 
   summarise(n= sum(refugiados))
 ```
+
 #Os 5 países que mais enviaram refugiados no ano de 1965 pertencem às subregiões Sub-Saharan Africa e Southern Europe.
+
 ```{r}
 # Falso
 ref6 <- refugiados3 %>% 
@@ -220,8 +233,8 @@ ref6 <- refugiados3 %>%
   
 ```
 
-
 #Os 6 países que mais receberam refugiados a partir de 1982 receberam juntos 19523 refugiados.
+
 ```{r}
 # Falso: 252559819	
 ref7 <- refugiados3 %>% 
@@ -232,7 +245,9 @@ ref7 <- refugiados3 %>%
   arrange(desc(n)) %>% 
   summarise(n2=sum(n[1:6]))
 ```
+
 # Existem 27 países que receberam pelo menos 5382652 refugiados.
+
 ```{r}
 # Falso : 30
 ref8 <- refugiados3 %>% 
@@ -241,4 +256,3 @@ ref8 <- refugiados3 %>%
   summarise(n=sum(refugiados)) %>% 
   filter(n >= 5382652)
 ```
-

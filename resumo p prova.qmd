@@ -1,0 +1,288 @@
+---
+title: "Revisão prova"
+author: "Cristiane Zhu"
+format: html
+editor: visual
+---
+# PACOTES
+```{r}
+require(data.table)
+require(tidyverse)
+require(dplyr)
+require(stringr)
+require(magrittr)
+require(lubridate)
+require(tibble)
+banco_de_dados <- fread("")
+```
+
+
+```{r}
+5%% 2 #resto da divisão
+5%/% 2 #divisão inteira
+log(10) #log base natural
+log10(8) #log base 10
+abs(-20) #módulo
+
+```
+
+```{r}
+sequencia_10_100 <- seq(from = 10,
+                        to = 100, 
+                        by = 5)
+sequencia_10_100
+
+seq(from = x, to = y, by = z) # sequencia
+rep(x, times = n) # repetiir sequencia de elementos
+rep(x, each = n) # repetir cada elemento
+
+vetor <- c(1,2,3,4,5,6,7)
+vetor[1] # primeiro elemento
+vetor[1:5] # elemento 1 ao 5
+vetor[c(1,3,6)] #elementos específicos
+```
+
+```{r}
+runif() # num aleatorios entre 0 e 1
+rnorm()# num aleatoios de uma normal com media 0 e sd 1
+sample(vetor, size=2, replace= TRUE) #amostras aleatorias
+```
+
+```{r}
+class(vetor) # descobrir a classe
+is.numeric(vetor) # retorna true/false
+as.character() #converte o tipo de dado
+```
+
+# VETORES
+```{r}
+alturas <- c("João" = 1.82, 
+"Bianca" = 1.68,
+"Carlos" = 1.75, 
+"Ana" = 1.70)
+
+alturas > 1.70 # retorna TRUE/FALSE
+
+alturas[alturas > 1.70] # filtrar os dados
+alturas["João"] # Seleciona a altura de João
+
+append(alturas, 
+       value = c("Ivete" = 1.60)) # Adiciona a altura de Ivete
+```
+
+# FUNÇÕES
+```{r}
+sum() #somar
+mean() #media
+median() #mediana
+max() # maior valor
+min() #menor valor
+length() #num de elementos 
+sort() #ordena
+unique() # retorna elementos unicos
+var() # variancia
+sd() # desvio padrao
+quantile() #quartis
+IQL() #amplitude interquartilica
+```
+
+#NA
+```{r}
+## NA
+is.na # identificar os valores na
+na.omit # remove valores na
+
+```
+
+# MATRIZES
+```{r}
+## matizes
+cbind() # juntar vetores po coluna
+rbind() # juntar vetores por linha
+
+A <- matrix(c(1,2,3,4,5,6,7,8,9), nrow=3, byrow = T)
+B <- matrix(c(2:10), nrow= 3, byrow = T)
+A[3,3] # elemento linha 3 e coluna 3
+A[,3] #terceira coluna interia
+A[3,] #terceira linha inteira
+A[which(A>2)] #filtro
+
+colSums(A) #soma colunas
+rowSums(A) #soma linhas
+colMeans(A) #media colunas
+rowMeans(A) #media linhas
+
+
+k<- 2
+mult_escalar <- k*A #multiplicação por escalar
+
+A * B #produto elemento a elemento
+A %*% B # produto matricial
+
+t(A) #transposta A^T
+det(A) #determinante
+solve(A) #inversa A^-1
+diag(A) #diagonal
+eigen(A) #autovalores e autovetores
+crossprod(A,B) #(A^T).B
+tcrossprod(A,B) #A.(B^T)
+upper.tri(A) #acima da diag
+lower.tri(A) #abaixo da diag
+A[upper.tri(A)] #ver os elementos
+
+```
+
+# ARRAYS
+```{r}
+arr <- array(1:24, dim = c(2, 3, 4)) #linha, coluna, num matriz
+arr[2,3,4] #linha 2, coluna 3 da ultima matriz
+```
+
+# DATA FRAMES
+```{r}
+#data.frame
+subset(data_frame, ...) #filtrar dados
+dim()
+nrow()
+ncol()
+summary() #resumo
+str() #estrutura do data frame
+by(salario, idade, mean) #media salario por(by) idade
+```
+
+# FATOR
+```{r}
+factor(c(), levels= c())
+levels() # acessar níveis
+nlevels() #num de níveis
+```
+
+
+# SELECT FILTER SUMMARISE
+```{r}
+# filtrar variáveis
+select()
+select(starts_with(""))
+select(ends_with(""))
+select(contains(""))
+select(where(is.numeric())) # por tipo
+
+# filtrar observações
+filter()
+filter(between())# entre intervalo de valor
+filter(%in%) #quando criar um vetor com as obs de interesse
+filter(%ni%) #negação
+filter(%like%) #padrao palavra
+grepl("") #mais de um padrao de palavras
+
+#summarise
+ summarise(n = n(), 
+            f_r = n()/nrow(car_crash), 
+            f_per = n()/nrow(car_crash) * 100, 
+            media = mean(levemente_feridos, na.rm = T), 
+            Q1 = quantile(levemente_feridos, 0.25, type = 5, na.rm = T), 
+            Q2 = quantile(levemente_feridos, 0.5, type = 5, na.rm = T), 
+            Q3 = quantile(levemente_feridos, 0.75, type = 5, na.rm = T), 
+            var = var(levemente_feridos, na.rm = T), 
+            sd  = sd(levemente_feridos, na.rm = T), 
+            min = min(levemente_feridos, na.rm = T), 
+            max = max(levemente_feridos, na.rm = T)) 
+```
+
+
+# DATAS
+```{r}
+as.Date()
+as.Date(data_string, format= )
+# %d/%m/%y 21/09/2023
+# %B %d %Y May 14 1982
+
+data_formatada <- format(data, "%d/%m/%Y") #data p string
+
+# extrair
+data <- as.Date("2023-08-21")
+ano <- format(data, "%Y")
+mes <- format(data, "%m")
+dia <- format(data, "%d")
+
+diferenca <- difftime(data1, data2, units = "days")  # Diferença em dias
+
+#lubridate
+# retorna ano mes dia
+data_ymd <- ymd("2023-08-21")
+data_mdy <- mdy("08-21-2023")
+data_dmy <- dmy("21-08-2023")
+
+# p fazer contas
+days()
+weeks()
+months()
+years()
+
+#extrair
+data <- ymd_hms("2023-08-21 15:30:45")
+ano <- year(data)
+mes <- month(data)
+dia <- day(data)
+hora <- hour(data)
+minuto <- minute(data)
+segundo <- second(data)
+
+# fuso horario
+with_tz(data, tz="")
+```
+
+
+# JOINS
+```{r}
+innerjoin_fulljoin <- = tabela1 %>% 
+  inner_join(tabela2, join_by(origin == faa))
+
+leftjoin_rightjoin <- tabela1 %>% 
+  left_join(airlines, 
+            by = "carrier")
+
+## filtrar sem ter q juntar as tabelas
+airports %>% 
+  semi_join(flights2, join_by(faa == origin))
+```
+
+# PIVOTAEM
+```{r}
+pivot_longer(data, cols, names_to = , values_to = )
+pivot_wider(data, names_from = , values_from = )
+```
+
+```{r}
+separate(data, into=, sep=)#separar colunas em varias colunas
+unite() # unir colonas formando uma sring só
+```
+
+```{r}
+## strings
+exemplo <- c("Maria", "João")
+toupper(exemplo)
+tolower(exemplo)
+substr(exemplo, start= 1, stop=3) #extrai subcadeia
+gsub(pattern = "a" ,replacement= "e", x= exemplo)
+
+
+
+str(view) # ver a string criada
+\n # quebaa de linhas
+str_c("ola", dados, "!") # combina strings
+str_flatten(na.rm = T, collapse = "oq vai pearar eles") # juntas strings de um vetor em um só
+str_split(data, pattern =  )
+str_squish() # tirar espaços desnecessários
+str_length() #conta caracteres
+str_count() # conta caracteres especificos
+str_replace()
+str_remove() #remover a primeira
+str_remove_all() # remover todas instancias
+str_detect()
+
+
+
+
+```
+
