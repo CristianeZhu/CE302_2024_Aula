@@ -1,0 +1,289 @@
+---
+title: "Aula 8"
+author: "Cristiane Huang Zhu"
+format: html
+editor: visual
+---
+
+# WHILE
+```{r}
+while (condicao) {
+  # Código a ser repetido enquanto a condição for verdadeira
+}
+
+
+i <- 1 # sempre definimos o critério de parada fora do loop
+while (i < 6) {
+  print(i)
+  i <- i + 1 # Sempre alteramos o critério 
+  # de parada, senão caímos em um loop infinito
+}
+```
+
+
+# BREAK
+```{r}
+i <- 1
+while (i < 6) {
+  print(i)
+  i <- i + 1
+  if (i == 4) {
+    break
+  }
+}
+
+contador <- 0
+i<- 0
+while (i <10) {
+  i= sample(1:100, size=1)
+  contador=contador +1
+  print(contador)
+  print(i)
+  if(contador ==4){
+    break
+  }
+}
+```
+
+
+# NEXT
+```{r}
+i <- 0
+while (i < 6) {
+  i <- i + 1
+  if (i == 3) {
+    next
+  }
+  print(i)
+}
+```
+
+
+```{r}
+require(tidyverse)
+require(magrittr)
+require(dplyr)
+set.seed(1234)
+
+dado <- seq(1:6)
+n_lancamento = 0
+sorteio = 0
+
+#criar lista p salvar os resultados
+# atribuir coisa p lista, colchetes duplos
+df=list()
+while (sorteio != 5) {
+  sorteio =  sample(dado, 1)
+  n_lancamento = n_lancamento + 1
+  df[[n_lancamento]]=data.frame(n_sorteado= sorteio, 
+                n_lancamento = n_lancamento)
+  
+  cat(paste0("\n\nLançamento: ", n_lancamento, "\nValor Sorteado: ", sorteio))
+}
+
+df %<>% dplyr:: bind_rows()
+
+
+```
+
+
+## FOR
+```{r}
+for (variavel in sequencia) {
+  # Código a ser executado para cada valor da sequência
+}
+
+for(a in 1:10) {
+  x1 <- a^2
+  print(x1)
+}
+```
+
+
+```{r}
+dado = c(1:6)
+soma_dois_dados = function(dado1, dado2){
+  soma = dado1 + dado2
+  
+}
+quadrado_soma = function(soma){
+  soma2 = soma^2
+  return(soma2)
+}
+
+resultado = list()
+k = 0 
+for(i in dado){
+  for(j in dado){
+    k = k + 1
+    soma = soma_dois_dados(dado[i], dado[j])
+    somaqd = quadrado_soma(soma)
+    
+    resultado[[k]] = data.frame(dado1 = dado[i], 
+                               dado2 = dado[j], 
+                               soma = soma, 
+                               soma2 = somaqd)
+  }
+}
+
+resultado
+```
+
+
+# FUNÇÕES
+```{r}
+nome_da_funcao <- function(argumentos) {
+  # Corpo da função
+  # Instruções para realizar a tarefa
+  return(resultado) # Resultado da função
+}
+```
+
+```{r}
+data("iris")
+
+media_sepal_len = round(sum(iris$Sepal.Length)/length(iris$Sepal.Length),2)
+media_sepal_len
+
+media_sepal_wid = round(sum(iris$Sepal.Width)/length(iris$Sepal.Width),2)
+media_sepal_wid
+
+media_petal_len = round(sum(iris$Petal.Length)/length(iris$Petal.Length),2)
+media_petal_len
+
+media_petal_wid = round(sum(iris$Petal.Width)/length(iris$Petal.Width),2)
+media_petal_wid
+```
+
+
+```{r}
+minha_media <- function(vetor_de_dados){
+  media = sum(vetor_de_dados)/length(vetor_de_dados)
+  media = round(media, 2)
+  return(media)
+}
+
+minha_media(iris$Sepal.Length)
+```
+
+
+```{r}
+minha_media_arredond <- function(vetor_de_dados, digitos= 1){
+  media = sum(vetor_de_dados)/length(vetor_de_dados)
+  media = round(media, digitos)
+  return(media)
+}
+
+minha_media_arredond(iris$Sepal.Length)
+```
+
+
+```{r}
+meu_desvio_padrao_amostral <- function(vetor) {
+  media <- minha_media(vetor) 
+  diferenca <- vetor - media  # Calcula as diferenças em relação à média
+  quadrados <- diferenca^2  # Calcula os quadrados das diferenças
+  variancia <- sum(quadrados) / (length(vetor) - 1)  # Calcula a variância
+  desvio_padrao <- sqrt(variancia)  # Calcula o desvio padrão
+  return(desvio_padrao)
+}
+
+meu_desvio_padrao_amostral(iris$Sepal.Length)
+```
+
+
+# COEFICIENTE DE VARIAÇÃO
+```{r}
+meu_coeficiente_variacao <- function(vetor, arredondamento = 2) {
+  media <- minha_media(vetor, digitos = arredondamento)  # Calcula a média
+  desvio_padrao <- meu_desvio_padrao_amostral(vetor)  # Calcula o desvio padrão
+  coeficiente_variacao <- (desvio_padrao / media) * 100  # Calcula o CV em porcentagem
+  coeficiente_variacao = round(coeficiente_variacao, arredondamento)
+  out= data.frame(media= media,
+                  n=length(vetor), 
+                  desvio=desvio_padrao,
+                  coenficiente_variacao= coeficiente_variacao)
+  return(coeficiente_variacao)
+}
+
+meu_coeficiente_variacao(iris$Sepal.Length, arredondamento = 2)
+```
+
+
+## mensagens
+```{r}
+x <- -5
+if (x < 0) {
+  message("O valor de x é negativo.")
+}
+
+x <- -5
+if (x < 0) {
+  warning("O valor de x é negativo.")
+}
+
+x <- -5
+if (x < 0) {
+  stop("O valor de x é negativo.")
+}
+```
+
+## CONTROLE DE FLUXO
+```{r}
+if (condicao) {
+  # Código a ser executado se a condição for verdadeira
+} else {
+  # Código a ser executado se a condição for falsa
+}
+
+idade <- 25
+
+if (idade >= 18) {
+  cat("Você é maior de idade.\n")
+} else {
+  cat("Você é menor de idade.\n")
+}
+```
+
+
+```{r}
+pontuacao = 90
+
+if (pontuacao >= 90) {
+  nota = "A"
+} else {
+  if (pontuacao >= 80) {
+    nota = "B"
+  } else {
+    if (pontuacao >= 70) {
+      nota = "C"
+    } else {
+      nota = "D"
+    }
+  }
+}
+
+nota
+
+classifica_nota <- function(pontuacao) {
+  if (pontuacao >= 90) {
+    nota <- "A"
+  } else {
+    if (pontuacao >= 80) {
+      nota <- "B"
+    } else {
+      if (pontuacao >= 70) {
+        nota <- "C"
+      } else {
+        nota <- "D"
+      }
+    }
+  }
+  cat(paste("A nota do aluno é:", nota))
+  return(nota)
+}
+
+pontuacao_aluno <- 85
+nota <- classifica_nota(pontuacao_aluno)
+```
+
