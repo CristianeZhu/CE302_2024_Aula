@@ -1,0 +1,255 @@
+---
+title: "Estudo- estruturas de repetição"
+author: "Cristiane Zhu"
+format: html
+editor: visual
+---
+
+# While
+
+```{r}
+# enquanto for verdade, repita o código
+while(condicao) {
+  #código a ser repetido
+}
+
+# imprima enquanto i for menor que 7
+i <- 1
+while(i < 7){
+  print(i)
+  i <- i+1
+}
+
+```
+
+# Break
+
+```{r}
+# parar mesmo que a condição seja verdadeira
+i <- 1
+while (i < 6) {
+  print(i)
+  i <- i + 1
+  if (i == 4) {
+    break
+  }
+}
+```
+
+# Next
+
+```{r}
+# apenas ignorar 
+i <- 0
+while (i < 6) {
+  i <- i + 1
+  if (i == 3) {
+    next
+  }
+  print(i)
+}
+```
+
+# Exercício
+
+```{r}
+set.seed(1234)
+dado <- seq(1:6)
+n_lancamento <- 0
+sorteio <- 0
+
+while(sorteio !=5) {
+  sorteio= sample(dado,1) #num q esta contido em dado e quero só 1 número
+  n_lancamento = n_lancamento + 1
+  cat(paste0("\n\nLançamento: ", n_lancamento, "\nValor Sorteado: ", sorteio))
+}
+```
+
+# guardar os valores em uma lista
+
+```{r}
+set.seed(1234)
+dado <- seq(1:6)
+n_lancamento <- 0
+sorteio <- 0
+df= list()
+while(sorteio !=5) {
+  sorteio= sample(dado,1) #num q esta contido em dado e quero só 1 número
+  n_lancamento = n_lancamento + 1
+   df[[n_lancamento]]=data.frame(n_sorteado= sorteio, 
+                n_lancamento = n_lancamento)
+  cat(paste0("\n\nLançamento: ", n_lancamento, "\nValor Sorteado: ", sorteio))
+}
+df
+```
+
+# For
+
+```{r}
+# serve para sequencia, vetores ou lista
+
+# o quadrado de cada numero da sequencia
+for(i in 1:10) {
+  x1 <- i^2
+  print(x1)
+}
+
+#soma dos numeros
+for(i in 1:10) {
+  soma <- i + i
+  print(soma)
+}
+```
+
+# for aninhado
+
+```{r}
+require(dplyr)
+require(magrittr)
+
+#função para somar os numeros dos dois dados
+dado = c(1:6)
+soma_dois_dados = function(dado1, dado2){
+  soma = dado1 + dado2
+  
+}
+quadrado_soma = function(soma){
+  soma2 = soma^2
+  return(soma2)
+}
+
+
+resultado = list()
+k = 0 
+for(i in dado){
+  for(j in dado){
+    k = k + 1
+    soma = soma_dois_dados(dado[i], dado[j])
+    somaqd = quadrado_soma(soma)
+    
+    resultado[[k]] = data.frame(dado1 = dado[i], 
+                               dado2 = dado[j], 
+                               soma = soma, 
+                               soma2 = somaqd)
+  }
+}
+
+resultado
+
+resultado %<>% bind_rows()
+resultado
+```
+
+# Família apply
+
+```{r}
+# aplicar função em lista, vetor, matriz ou array
+
+# apply (matriz, array ou data.frame)
+#apply(X=data.frame,Margin= 1(linhas) ou 2(colunas), FUN= função( soma, media,...))
+
+matriz1 <- matrix(1:6, nrow = 2)
+matriz1
+
+soma_linhas <- apply(matriz1, 1, sum)
+soma_colunas <- apply(matriz1, 2, sum)
+
+
+```
+
+```{r}
+#lapply (para lista)
+#lapply(X, função)
+
+minha_lista <- list(a = c(1, 2, 3), b = c(4, 5, 6))
+minha_lista
+resultados <- lapply(minha_lista, mean)
+resultados
+```
+
+```{r}
+#sapply: igual lapply mas retorna o resultado em um vetor ou matriz e n separado
+
+minha_lista <- list(a = c(1, 2, 3), b = c(4, 5, 6), c=c(7,6,8))
+resultados <- sapply(minha_lista, mean)
+resultados
+```
+
+```{r}
+#mapply: aplica função a vários argumentos
+# mapply(função, argumentos da função)
+
+resultado <- mapply(soma_dois_dados, 
+                    dado, dado
+                    )
+
+print(resultado)
+```
+
+```{r}
+dois_dados = expand.grid(dado, dado)
+dois_dados
+```
+
+# verificar se um numero é primo
+
+```{r}
+
+numero_impar<- function(numero){
+  resto = numero %% 2 != 0
+  return(resto)
+}
+
+numero_impar(6)
+numero_impar(5)
+```
+
+# Crie uma função que calcule os n primeiros números da sequência de Fibonacci. A sequência de Fibonacci começa com 0 e 1, e os números subsequentes são a soma dos dois anteriores (0, 1, 1, 2, 3, 5, 8, …)
+
+```{r}
+num_fibonacci <- function(n) {
+  if(n<= 0) {
+    stop(" tem que ser num positivo")
+  }
+  fib <- numeric(n)
+  if(n >= 1) fib[1] <- 0
+  if (n>=2) fib[2] <- 1
+  for( i in 3:n){ ## o i vai assumir os valores de 3 até n
+    fib[i] <- fib[i - 1] + fib[i - 2] #o dois num anteriores
+  }
+  return(fib)
+}
+num_fibonacci(10)
+```
+
+```{r}
+dados <-mtcars
+
+var_categoricas <- c("cyl", "vs", "am")
+
+
+função <- function(df) {
+  sapply(names(df), function(var){
+     if (var %in% var_categoricas) {
+      return(c(Q1 = NA, Q2 = NA))
+    } else {
+       Q1 <- quantile(df[[var]], 0.25, na.rm = TRUE) # Primeiro quartil
+      Q2 <- quantile(df[[var]], 0.5, na.rm = TRUE)  # Segundo quartil (mediana)
+      return(c(Q1 = Q1, Q2 = Q2))
+  }
+})}
+
+print(função(mtcars))
+
+
+## outro jeito
+funçao <- function(x){
+  if (is.numeric(x)) {
+    return(c(Q1 = quantile(x, 0.25), Q2 = quantile(x, 0.5)))
+  } else{
+    return(c(Q1 = NA, Q2 = NA))
+  }
+}
+
+quartis <- apply(mtcars,2 ,funçao)
+```

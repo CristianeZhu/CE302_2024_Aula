@@ -1,0 +1,326 @@
+---
+title: "Resolução p2 2023"
+author: "Cristiane Zhu"
+format: html
+editor: visual
+---
+
+
+
+```{r}
+require(tidyverse)
+require(dplyr)
+require(magrittr)
+require(data.table)
+```
+
+# Questão 1
+
+## Função
+```{r}
+medidas_descritivas <- function(variavel){
+  n <- length(variavel)
+  media <- sum(variavel)/n
+  mediana <- median(variavel)
+  diferenca <- variavel - media
+  
+  
+  variancia <- sum((diferenca)^2) / (n-1)
+  desvio <- sum(abs(diferenca))/(n-1)
+  coef_pearson <- ((media- mediana) / sqrt(variancia))*3
+  
+  return(list(variancia=variancia, desvio=desvio, coef=coef_pearson))
+}
+
+ar <- airquality
+ar
+```
+
+
+## A variância amostral da variável OZONE é 823,31
+```{r}
+ozone <- ar %>% 
+  select(Ozone) %>% 
+  na.omit(Ozone)
+
+medidas_descritivas(ozone$Ozone)
+
+```
+
+
+## Considerando apenas o nível 8 da variável Month, o DMA da variável Wind é 2,75.
+```{r}
+month <- ar %>% 
+  select(Month, Wind) %>% 
+  filter(Month==8) %>% 
+  na.omit(Wind)
+
+medidas_descritivas(month$Wind)
+  
+```
+
+## Para todas as variáveis do banco airquality a variância amostral é maior do que o desvio médio absoluto.
+```{r}
+sem_na <- ar %>% 
+  na.omit()
+
+tudo <- apply(sem_na, 2,medidas_descritivas)
+tudo
+
+```
+
+
+##O DMA da variável Ozone é 812,62.
+
+```{r}
+medidas_descritivas(ozone$Ozone)
+```
+
+## No nível 8 da variável Month, o AS2 da variável Wind é 0,18.
+```{r}
+medidas_descritivas(month$Wind)
+```
+# Questão 2
+```{r}
+matriz_A <-  matrix(c(3, -3, 6, -8, 
+                     1, 2, -10, -7,
+                     8, -2, -9, -4, 
+                     10, -5, -1, 7), 
+                   nrow = 4, 
+                   byrow = TRUE)
+
+matriz_B <-  matrix(c(-1, 8, 13, -16, 
+                     0, 16, 18, -6,
+                     -18, -15, -2, -11,
+                     11, -12, -13, 3, 
+                     -4, 5, -19, 17),
+                   nrow = 5,
+                   byrow = TRUE) 
+
+matriz_C <- matrix(c(-22, 14, 21, 19,
+                     23, -20, -17, 17,
+                     -7, -11, -23, 28, 
+                     24, -14, -5, 8), 
+                   nrow = 4, 
+                   byrow = TRUE)
+```
+
+
+```{r}
+## se é primo ou não
+primo <- function(numero) {
+  if (numero <= 1) {
+    return(FALSE)
+  }
+  for (i in 2:sqrt(numero)) {
+    if (numero %% i == 0) {
+      return(FALSE)
+    }
+  }
+  return(TRUE)
+}
+
+varredura_matriz <- function(matriz) {
+  n_linhas <- nrow(matriz)
+  n_colunas <- ncol(matriz)
+  
+  # Criar uma matriz vazia para armazenar os resultados
+  resultado <- matrix(0, nrow = n_linhas, ncol = n_colunas)
+  
+  # funcionar sobre cada elemento da matriz
+  for (i in 1:n_linhas) {
+    for (j in 1:n_colunas) {
+      valor <- matriz[i, j]
+    
+    
+      if (primo(valor)) {
+      resultado[i, j] <- valor * 8
+    }
+        else if (valor >= 0 & sqrt(valor) %% 1 == 0) {
+      resultado[i, j] <- ifelse((valor - 19) < 0, (valor - 19) ^ 7, valor - 19)
+    }
+        else if (valor < 0) {
+      resultado[i, j] <-(abs(valor)) ^ (1 / 3)
+    }
+        else{
+      resultado[i, j] <- valor
+    }
+  }}
+  
+  return(resultado)
+}
+```
+
+## A matriz A tem 2 números primos
+```{r}
+numeros_primos_matriz <- function(matriz){
+  matriz_primos <- apply(matriz, c(1,2), primo)
+  matriz_resultado <- ifelse(matriz_primos, matriz, NA)
+  return(matriz_resultado)
+}
+
+numeros_primos_matriz(matriz_A)
+```
+
+
+## A soma dos elementos da diagonal principal da matriz B transformada é -2162.
+```{r}
+matriz_transformada_B <- varredura_matriz(matriz_B)
+matriz_transformada_B
+sum(diag(matriz_transformada_B))
+
+```
+
+
+## A matriz C transformada é dada por
+```{r}
+varredura_matriz(matriz_C)
+```
+
+
+## O maior elemento, em módulo, da matriz C transformada é 184.
+```{r}
+matriz_transformada_c <- varredura_matriz(matriz_C)
+max(abs(matriz_transformada_c))
+```
+
+## A soma dos elementos da coluna 2 da matriz B transformada é -2130.
+```{r}
+sum(matriz_transformada_B[,2])
+
+```
+
+
+# Questão 3
+```{r}
+individuo <- read.table("Astrologia_Individuo.txt", col.names = c("Data_Nascimento"))
+
+casal <-  read.table("Astrologia_Casal.txt")
+```
+
+
+
+```{r}
+numerologia_individual <- function(data) {
+  # Remover barras da data
+  tirar_barra <- gsub("/", "", data)
+  
+  # Converter cada dígito em número
+  numeros <- as.numeric(unlist(strsplit(tirar_barra, "")))
+  
+  # Calcular o número base
+  numero_base <- sum(numeros)
+  while (numero_base > 9) { # Reduzir até obter um único dígito
+    numero_base <- sum(as.numeric(unlist(strsplit(as.character(numero_base), ""))))
+  }
+  
+
+  # Retornar resultados
+  return(numero_base)
+}
+
+abc <- apply(individuo, 1,numerologia_individual)
+abc
+abcd <- data.frame(abc)
+
+
+```
+
+##numerologia
+```{r}
+n<- function(numero_base) {
+  ni <- 
+}
+```
+
+
+
+## numero base casal
+```{r}
+astrologia_casal <- function(data1, data2) {
+  calcular_soma <- function(data) {
+    soma <- sum(as.numeric(unlist(strsplit(gsub("/", "", data), ""))))
+    while (soma >= 10) soma <- sum(as.numeric(unlist(strsplit(as.character(soma), ""))))
+    return(soma)
+  }
+  
+  soma1 <- calcular_soma(data1)
+  soma2 <- calcular_soma(data2)
+  compatibilidade <- calcular_soma(as.character(soma1 + soma2))
+  
+  list(Soma_Data1 = soma1, Soma_Data2 = soma2, Compatibilidade = compatibilidade)
+}
+
+resultado <- apply(casal, 1, function(row) {
+  astrologia_casal(row["V1"], row["V2"])
+})
+
+# Convertendo o resultado para um data.frame
+resultado_df <- do.call(rbind, lapply(resultado, as.data.frame))
+dados_completo <- cbind(casal, resultado_df)
+
+print(dados_completo)
+
+```
+
+
+## letra a
+```{r}
+numerologia <- apply(individuo, 1, numero_base)
+numerologia
+
+m<- resultado_df %>% 
+  filter(Compatibilidade ==6) %>% 
+  summarise(n=n())
+m
+```
+
+## letra b:  A numerologia do individuo, de um individuo nascido em 13/10/2008 é igual a 5
+```{r}
+a <- "13/10/2008"
+numerologia_individual(a)
+```
+## Um indivíduo nascido em 1/9/1993 apresente numero base igual a 5
+```{r}
+a <- "1/9/1993"
+numerologia_individual(a)
+
+```
+
+
+# letra d
+```{r}
+length(abcd[abcd ==7])
+```
+
+
+```{r}
+calcular_tamanho_amostra_proporcao <- function(p, e, z) {
+  n <- (z^2 * p * (1 - p)) / e^2
+  return(ceiling(n))  # Arredonda para o próximo número inteiro
+}
+
+# Parâmetros
+p <- 0.5       # Proporção esperada (50%)
+e <- 0.05      # Margem de erro (5%)
+z <- 1.96      # Valor Z para 95% de confiança
+
+tamanho_amostra <- calcular_tamanho_amostra_proporcao(p, e, z)
+print(tamanho_amostra)
+
+
+ajustar_tamanho_amostra <- function(n, N) {
+  n_ajustado <- n / (1 + (n - 1) / N)
+  return(ceiling(n_ajustado))
+}
+
+# Parâmetros
+n <- 385       # Tamanho da amostra calculado anteriormente
+N <- 1000      # Tamanho da população
+
+tamanho_amostra_ajustado <- ajustar_tamanho_amostra(n, N)
+print(tamanho_amostra_ajustado)
+
+
+```
+
